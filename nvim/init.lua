@@ -122,6 +122,60 @@ require("lazy").setup({
       }
     end,
   },
+  -- 1. Core Copilot Engine (handles authentication & inline suggestions)
+  {
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    event = "InsertEnter",
+    config = function()
+      require("copilot").setup({
+        suggestion = {
+          enabled = true,
+          auto_trigger = true, -- Shows ghost text as you type
+          keymap = {
+            accept = "<leader><Tab>", 
+            next = "<M-]>",
+            prev = "<M-[>",
+            dismiss = "<C-]>",
+          },
+        },
+        panel = { enabled = false }, -- Usually disabled in favor of CopilotChat
+      })
+    end,
+  },
+
+  -- 2. Copilot Chat Interface (handles the sidebar chat)
+  {
+    "CopilotC-Nvim/CopilotChat.nvim",
+    branch = "main",
+    dependencies = {
+      { "zbirenbaum/copilot.lua" }, -- Or github/copilot.vim
+      { "nvim-lua/plenary.nvim" },  -- Required for core functionality
+    },
+    build = "make tiktoken", -- Only on macOS/Linux. Remove if on Windows
+    opts = {
+      debug = false, -- Set to true if you run into issues
+      window = {
+        layout = 'float', -- 'float', 'vertical', 'horizontal', or 'replace'
+      },
+    },
+    keys = {
+      -- Quick keybind to open the chat
+      {
+        "<leader>cc",
+        function()
+          local input = vim.fn.input("Quick Chat: ")
+          if input ~= "" then
+            require("CopilotChat").ask(input, { selection = require("CopilotChat.select").buffer })
+          end
+        end,
+        desc = "CopilotChat - Quick chat",
+      },
+      -- Keybind to open the chat window directly
+      { "<leader>co", "<cmd>CopilotChatOpen<cr>", desc = "CopilotChat - Open chat window" },
+    },
+  },
+
 })
 
 -- ==========================================

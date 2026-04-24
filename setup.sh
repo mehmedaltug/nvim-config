@@ -3,6 +3,7 @@
 # Assumes apt
 
 # Install required packages
+sudo apt update
 sudo apt install -y nodejs npm clangd gcc python3 pipx python3-pylsp fzf curl default-jdk
 sudo npm i -g typescript-language-server typescript tree-sitter-cli
 pipx install uv
