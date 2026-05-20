@@ -49,6 +49,7 @@ require("lazy").setup({
       vim.lsp.enable('pylsp')
       vim.lsp.enable('jdtls')
       vim.lsp.enable('ts_ls')
+      vim.lsp.enable('rust_analyzer')
 
       -- Key mappings [cite: 7, 8]
       local keymap = vim.keymap.set
@@ -122,60 +123,87 @@ require("lazy").setup({
       }
     end,
   },
-  -- 1. Core Copilot Engine (handles authentication & inline suggestions)
+  {
+    "mason-org/mason.nvim",
+    opts = {
+        ui = {
+            icons = {
+                package_installed = "✓",
+                package_pending = "➜",
+                package_uninstalled = "✗"
+            }
+        }
+    },
+  },
+  {"xiyaowong/transparent.nvim",},
+  
+  -- Copilot Token Provider (Required for CodeCompanion's Copilot adapter)
   {
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
     event = "InsertEnter",
     config = function()
       require("copilot").setup({
-        suggestion = {
-          enabled = true,
-          auto_trigger = true, -- Shows ghost text as you type
-          keymap = {
-            accept = "<leader><Tab>", 
-            next = "<M-]>",
-            prev = "<M-[>",
-            dismiss = "<C-]>",
-          },
-        },
-        panel = { enabled = false }, -- Usually disabled in favor of CopilotChat
+        suggestion = { enabled = false }, -- Let CodeCompanion handle completion streams
+        panel = { enabled = false },
       })
     end,
   },
-
-  -- 2. Copilot Chat Interface (handles the sidebar chat)
+  -- The Unified AI Hub (Gemini CLI, Copilot, & Ollama)
   {
-    "CopilotC-Nvim/CopilotChat.nvim",
-    branch = "main",
+    "olimorris/codecompanion.nvim",
     dependencies = {
-      { "zbirenbaum/copilot.lua" }, -- Or github/copilot.vim
-      { "nvim-lua/plenary.nvim" },  -- Required for core functionality
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
     },
-    build = "make tiktoken", -- Only on macOS/Linux. Remove if on Windows
-    opts = {
-      debug = false, -- Set to true if you run into issues
-      window = {
-        layout = 'float', -- 'float', 'vertical', 'horizontal', or 'replace'
-      },
-    },
-    keys = {
-      -- Quick keybind to open the chat
-      {
-        "<leader>cc",
-        function()
-          local input = vim.fn.input("Quick Chat: ")
-          if input ~= "" then
-            require("CopilotChat").ask(input, { selection = require("CopilotChat.select").buffer })
-          end
-        end,
-        desc = "CopilotChat - Quick chat",
-      },
-      -- Keybind to open the chat window directly
-      { "<leader>co", "<cmd>CopilotChatOpen<cr>", desc = "CopilotChat - Open chat window" },
-    },
-  },
+    config = function()
+      require("codecompanion").setup({
+        strategies = {
+          chat = { adapter = "copilot" },
+          inline = { adapter = "copilot" },
+        },
+        adapters = {
+          -- 1. Standard API Connections
+          http = {
+            opts = {
+              show_presets = false, -- Hides OpenAI, Anthropic, Azure, etc.
+            },
+            copilot = function()
+              return require("codecompanion.adapters").extend("copilot", {})
+            end,
+            ollama = function()
+              return require("codecompanion.adapters").extend("ollama", {
+                schema = {
+                  model = {
+                    default = "qwen2.5-coder:7b",
+                  },
+                },
+              })
+            end,
+          },
+          -- 2. Agent Client Protocol (ACP) Terminal Executables
+          acp = {
+            opts = {
+              show_presets = false, -- Hides any default ACP agents (like Claude Code) you haven't explicitly added
+            },
+            gemini_cli = function()
+              return require("codecompanion.adapters").extend("gemini_cli", {
+                defaults = {
+                  auth_method = "oauth-personal",
+                },
+              })
+            end,
+          },
+        },
+      })
 
+      -- Global CodeCompanion Keybindings
+      local keymap = vim.keymap.set
+      keymap({ "n", "v" }, "<leader>aa", "<cmd>CodeCompanionChat<cr>", { silent = true })
+      keymap({ "n", "v" }, "<leader>ae", "<cmd>CodeCompanion<cr>", { silent = true })
+      keymap("v", "<leader>ax", "<cmd>CodeCompanionEvaluate<cr>", { silent = true })
+    end,
+  },
 })
 
 -- ==========================================
@@ -194,6 +222,8 @@ opt.showmatch = true --
 opt.backspace = { "indent", "eol", "start" } -- 
 opt.cursorline = true -- 
 opt.ttimeoutlen = 10 -- 
+opt.splitright = true -- Forces all vertical splits to open on the right
+opt.splitbelow = true -- Forces all horizontal splits to open at the bottom
 
 -- ==========================================
 -- 5. KEYBINDS
@@ -204,10 +234,18 @@ local keymap = vim.keymap.set
 keymap("n", "<leader>cd", ":Ex<CR>") -- [cite: 14]
 keymap("n", "<leader>sv", ":vsplit<CR>") -- [cite: 14]
 keymap("n", "<leader>sh", ":split<CR>") -- [cite: 14]
-keymap("n", "<C-w><S-Right>", "<C-w>l") -- [cite: 14]
-keymap("n", "<C-w><S-Left>", "<C-w>h") -- [cite: 14]
-keymap("n", "<C-w><S-Down>", "<C-w>j") -- [cite: 14]
-keymap("n", "<C-w><S-Up>", "<C-w>k") -- [cite: 14]
+keymap("n", "<C-Right>", "<C-w>l") -- [cite: 14]
+keymap("n", "<C-Left>", "<C-w>h") -- [cite: 14]
+keymap("n", "<C-Down>", "<C-w>j") -- [cite: 14]
+keymap("n", "<C-Up>", "<C-w>k") -- [cite: 14]
+keymap("n", "<M-Up>", ":resize +10<CR>")
+keymap("n", "<M-Down>", ":resize -10<CR>")
+keymap("n", "<M-Left>", ":vertical resize +10<CR>")
+keymap("n", "<M-Right>", ":vertical resize -10<CR>")
+keymap("n", "<C-M-Right>", "<C-w><S-l>")
+keymap("n", "<C-M-Left>", "<C-w><S-h>")
+keymap("n", "<C-M-Up>", "<C-w><S-k>")
+keymap("n", "<C-M-Down>", "<C-w><S-j>")
 
 -- Terminals (Adjusted for Neovim syntax)
 keymap("n", "<leader>th", ":split | term<CR>") -- [cite: 14]
