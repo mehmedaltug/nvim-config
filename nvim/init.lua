@@ -1,7 +1,7 @@
 -- ==========================================
 -- 1. LEADER KEY
 -- ==========================================
-vim.g.mapleader = " " -- [cite: 14]
+vim.g.mapleader = " " 
 
 -- ==========================================
 -- 2. BOOTSTRAP LAZY.NVIM
@@ -22,47 +22,46 @@ vim.cmd("colorscheme retrobox")
 -- ==========================================
 require("lazy").setup({
 
-  -- FZF (Keeping your original setup) 
+  -- FZF
   {
     "junegunn/fzf.vim",
     dependencies = { "junegunn/fzf" },
     config = function()
       local keymap = vim.keymap.set
-      keymap("n", "<leader>ff", ":Files<CR>") -- [cite: 1]
-      keymap("n", "<leader>fo", ":History<CR>") -- [cite: 1]
-      keymap("n", "<leader>fb", ":Buffers<CR>") -- [cite: 1]
-      keymap("n", "<leader>fq", ":CList<CR>") -- [cite: 1]
-      keymap("n", "<leader>fh", ":Helptags<CR>") -- [cite: 1]
-      keymap("n", "<leader>fs", ":Rg <C-r><C-w><CR>") -- [cite: 1]
-      keymap("n", "<leader>fg", ":Rg<Space>") -- [cite: 1]
-      keymap("n", "<leader>fc", ":execute 'Rg ' . expand('%:t:r')<CR>") -- [cite: 1, 2]
-      keymap("n", "<leader>fi", ":Files ~/.config/nvim<CR>") -- Path updated for Neovim [cite: 2]
+      keymap("n", "<leader>ff", ":Files<CR>") 
+      keymap("n", "<leader>fo", ":History<CR>")
+      keymap("n", "<leader>fb", ":Buffers<CR>") 
+      keymap("n", "<leader>fq", ":CList<CR>") 
+      keymap("n", "<leader>fh", ":Helptags<CR>")
+      keymap("n", "<leader>fs", ":Rg <C-r><C-w><CR>")
+      keymap("n", "<leader>fg", ":Rg<Space>")
+      keymap("n", "<leader>fc", ":execute 'Rg ' . expand('%:t:r')<CR>") 
+      keymap("n", "<leader>fi", ":Files ~/.config/nvim<CR>") 
     end
   },
 
-  -- Native Neovim LSP (Replaces yegappan/lsp) [cite: 6, 20]
+  -- Native Neovim LSP
   {
     "neovim/nvim-lspconfig",
     config = function()
-      -- local lspconfig = vim.lsp.config
       vim.lsp.enable('clangd')
       vim.lsp.enable('pylsp')
       vim.lsp.enable('jdtls')
       vim.lsp.enable('ts_ls')
       vim.lsp.enable('rust_analyzer')
 
-      -- Key mappings [cite: 7, 8]
+      -- Key mappings
       local keymap = vim.keymap.set
-      keymap("n", "gd", vim.lsp.buf.definition) -- [cite: 7]
-      keymap("n", "gr", vim.lsp.buf.references) -- [cite: 7]
-      keymap("n", "<leader>dd", vim.lsp.buf.hover) -- [cite: 7]
-      keymap("n", "gl", vim.diagnostic.open_float) -- [cite: 7]
-      keymap("n", "<leader>en", vim.diagnostic.goto_next) -- [cite: 7]
-      keymap("n", "<leader>ep", vim.diagnostic.goto_prev) -- [cite: 8]
+      keymap("n", "gd", vim.lsp.buf.definition) 
+      keymap("n", "gr", vim.lsp.buf.references) 
+      keymap("n", "<leader>dd", vim.lsp.buf.hover) 
+      keymap("n", "gl", vim.diagnostic.open_float) 
+      keymap("n", "<leader>en", vim.diagnostic.goto_next) 
+      keymap("n", "<leader>ep", vim.diagnostic.goto_prev) 
     end
   },
 
-  -- Completion (Replaces vimcomplete) [cite: 9, 20]
+  -- Completion
   {
     "hrsh7th/nvim-cmp",
     dependencies = { "hrsh7th/cmp-nvim-lsp" },
@@ -70,9 +69,8 @@ require("lazy").setup({
       local cmp = require("cmp")
       cmp.setup({
         mapping = {
-          ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 's' }), -- [cite: 11, 12]
-          ['<S-Tab>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'i', 's' }), -- [cite: 12]
-          -- Disabled Enter behavior as requested [cite: 9, 10]
+          ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 's' }), 
+          ['<S-Tab>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'i', 's' }),
           ['<CR>'] = cmp.mapping({ i = function(fallback) fallback() end }),
         },
         sources = cmp.config.sources({ { name = 'nvim_lsp' } })
@@ -80,49 +78,23 @@ require("lazy").setup({
     end
   },
 
-    {
-      "nvim-treesitter/nvim-treesitter",
-      build = ":TSUpdate",
-      config = function()
-        local ts = require("nvim-treesitter")
-        
-        -- Basic setup
-        ts.setup({
-          -- Specify install directory if needed (optional)
-          -- install_dir = "path/to/parsers" 
-        })
-    
-        -- Manually specify languages to install
-        ts.install({ "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "python", "javascript", "java", "c", "tsx" })
-    
-        -- Features like highlighting must now be enabled via autocommands or manually
-        vim.api.nvim_create_autocmd("FileType", {
-          callback = function()
-            pcall(vim.treesitter.start)
-          end,
-        })
-      end
-    },
-
-  -- Autopairs (Lua replacement for delimitmate) 
-  { "windwp/nvim-autopairs", event = "InsertEnter", config = true },
-
-  -- Project manager (Original) 
-  { "leafOfTree/vim-project" },
-
-  -- Status Line
   {
-    'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
     config = function()
-      local lualine = require("lualine")
-      lualine.setup {
-          options = {
-              theme = 'gruvbox_dark',
-          },
-      }
-    end,
+      local ts = require("nvim-treesitter")
+      
+      ts.setup({})
+      ts.install({ "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "python", "javascript", "java", "c", "tsx" })
+  
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function()
+          pcall(vim.treesitter.start)
+        end,
+      })
+    end
   },
+
   {
     "mason-org/mason.nvim",
     opts = {
@@ -184,7 +156,7 @@ require("lazy").setup({
           -- 2. Agent Client Protocol (ACP) Terminal Executables
           acp = {
             opts = {
-              show_presets = false, -- Hides any default ACP agents (like Claude Code) you haven't explicitly added
+              show_presets = false, -- Hides any default ACP agents
             },
             gemini_cli = function()
               return require("codecompanion.adapters").extend("gemini_cli", {
@@ -210,20 +182,20 @@ require("lazy").setup({
 -- 4. OPTIONS
 -- ==========================================
 local opt = vim.opt
-opt.expandtab = true -- 
-opt.shiftwidth = 4 -- 
-opt.softtabstop = 4 -- 
-opt.tabstop = 4 -- 
-opt.scrolloff = 20 -- 
-opt.number = true -- 
-opt.relativenumber = true -- 
-opt.smartindent = true -- 
-opt.showmatch = true -- 
-opt.backspace = { "indent", "eol", "start" } -- 
-opt.cursorline = true -- 
-opt.ttimeoutlen = 10 -- 
-opt.splitright = true -- Forces all vertical splits to open on the right
-opt.splitbelow = true -- Forces all horizontal splits to open at the bottom
+opt.expandtab = true
+opt.shiftwidth = 4 
+opt.softtabstop = 4 
+opt.tabstop = 4 
+opt.scrolloff = 20 
+opt.number = true 
+opt.relativenumber = true 
+opt.smartindent = true 
+opt.showmatch = true 
+opt.backspace = { "indent", "eol", "start" } 
+opt.cursorline = true 
+opt.ttimeoutlen = 10 
+opt.splitright = true 
+opt.splitbelow = true 
 
 -- ==========================================
 -- 5. KEYBINDS
@@ -231,13 +203,13 @@ opt.splitbelow = true -- Forces all horizontal splits to open at the bottom
 local keymap = vim.keymap.set
 
 -- Windows
-keymap("n", "<leader>cd", ":Ex<CR>") -- [cite: 14]
-keymap("n", "<leader>sv", ":vsplit<CR>") -- [cite: 14]
-keymap("n", "<leader>sh", ":split<CR>") -- [cite: 14]
-keymap("n", "<C-Right>", "<C-w>l") -- [cite: 14]
-keymap("n", "<C-Left>", "<C-w>h") -- [cite: 14]
-keymap("n", "<C-Down>", "<C-w>j") -- [cite: 14]
-keymap("n", "<C-Up>", "<C-w>k") -- [cite: 14]
+keymap("n", "<leader>cd", ":Ex<CR>") 
+keymap("n", "<leader>sv", ":vsplit<CR>") 
+keymap("n", "<leader>sh", ":split<CR>")
+keymap("n", "<C-Right>", "<C-w>l") 
+keymap("n", "<C-Left>", "<C-w>h") 
+keymap("n", "<C-Down>", "<C-w>j") 
+keymap("n", "<C-Up>", "<C-w>k") 
 keymap("n", "<M-Up>", ":resize +10<CR>")
 keymap("n", "<M-Down>", ":resize -10<CR>")
 keymap("n", "<M-Left>", ":vertical resize +10<CR>")
@@ -247,25 +219,23 @@ keymap("n", "<C-M-Left>", "<C-w><S-h>")
 keymap("n", "<C-M-Up>", "<C-w><S-k>")
 keymap("n", "<C-M-Down>", "<C-w><S-j>")
 
--- Terminals (Adjusted for Neovim syntax)
-keymap("n", "<leader>th", ":split | term<CR>") -- [cite: 14]
-keymap("n", "<leader>tv", ":vsplit | term<CR><C-w>l") -- [cite: 14]
-keymap("n", "<leader>tt", ":tabnew | term<CR>") -- [cite: 14]
-keymap("t", "<Esc>", "<C-\\><C-n>") -- Escape terminal mode [cite: 14]
+-- Terminals
+keymap("n", "<leader>th", ":split | term<CR>") 
+keymap("n", "<leader>tv", ":vsplit | term<CR><C-w>l") 
+keymap("n", "<leader>tt", ":tabnew | term<CR>") 
+keymap("t", "<Esc>", "<C-\\><C-n>") 
 
 -- Tabs
-keymap("n", "<leader>tn", ":tabnew<CR>") -- [cite: 14]
-keymap("n", "<leader>tc", ":tabclose<CR>") -- [cite: 14]
-keymap("n", "<leader>1", ":tabp<CR>") -- [cite: 14]
-keymap("n", "<leader>2", ":tabn<CR>") -- [cite: 14]
+keymap("n", "<leader>tn", ":tabnew<CR>") 
+keymap("n", "<leader>tc", ":tabclose<CR>") 
+keymap("n", "<leader>1", ":tabp<CR>") 
+keymap("n", "<leader>2", ":tabn<CR>") 
 
 -- File / Project
-keymap("n", "<leader>w", ":w<CR>") -- [cite: 14]
-keymap("n", "<leader>q", ":q<CR>") -- [cite: 14]
-keymap("n", "<leader>rc", ":Ex ~/.config/nvim<CR>") -- Updated path [cite: 14]
-keymap("n", "<leader>pl", ":ProjectList<CR>") -- [cite: 14]
-keymap("n", "<leader>pc", ':Project <c-r>=expand("$PWD")<CR>') -- [cite: 14]
-keymap("n", "<leader>ls", ":tabnew | term npx live-server<CR><C-\\><C-n>:tabp<CR>") -- [cite: 14]
+keymap("n", "<leader>w", ":w<CR>") 
+keymap("n", "<leader>q", ":q<CR>") 
+keymap("n", "<leader>rc", ":Ex ~/.config/nvim<CR>") 
+keymap("n", "<leader>ls", ":tabnew | term npx live-server<CR><C-\\><C-n>:tabp<CR>") 
 
 -- Misc
 vim.keymap.set("n", "<Esc>", function()
