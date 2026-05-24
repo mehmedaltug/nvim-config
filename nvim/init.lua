@@ -22,24 +22,6 @@ vim.cmd("colorscheme retrobox")
 -- ==========================================
 require("lazy").setup({
 
-  -- FZF
-  {
-    "junegunn/fzf.vim",
-    dependencies = { "junegunn/fzf" },
-    config = function()
-      local keymap = vim.keymap.set
-      keymap("n", "<leader>ff", ":Files<CR>") 
-      keymap("n", "<leader>fo", ":History<CR>")
-      keymap("n", "<leader>fb", ":Buffers<CR>") 
-      keymap("n", "<leader>fq", ":CList<CR>") 
-      keymap("n", "<leader>fh", ":Helptags<CR>")
-      keymap("n", "<leader>fs", ":Rg <C-r><C-w><CR>")
-      keymap("n", "<leader>fg", ":Rg<Space>")
-      keymap("n", "<leader>fc", ":execute 'Rg ' . expand('%:t:r')<CR>") 
-      keymap("n", "<leader>fi", ":Files ~/.config/nvim<CR>") 
-    end
-  },
-
   -- Native Neovim LSP
   {
     "neovim/nvim-lspconfig",
@@ -190,6 +172,8 @@ opt.scrolloff = 20
 opt.number = true 
 opt.relativenumber = true 
 opt.smartindent = true 
+opt.smartcase = true
+opt.ignorecase = true
 opt.showmatch = true 
 opt.backspace = { "indent", "eol", "start" } 
 opt.cursorline = true 
@@ -225,19 +209,12 @@ keymap("n", "<leader>tv", ":vsplit | term<CR><C-w>l")
 keymap("n", "<leader>tt", ":tabnew | term<CR>") 
 keymap("t", "<Esc>", "<C-\\><C-n>") 
 
--- Tabs
-keymap("n", "<leader>tn", ":tabnew<CR>") 
-keymap("n", "<leader>tc", ":tabclose<CR>") 
-keymap("n", "<leader>1", ":tabp<CR>") 
-keymap("n", "<leader>2", ":tabn<CR>") 
-
--- File / Project
-keymap("n", "<leader>w", ":w<CR>") 
-keymap("n", "<leader>q", ":q<CR>") 
-keymap("n", "<leader>rc", ":Ex ~/.config/nvim<CR>") 
-keymap("n", "<leader>ls", ":tabnew | term npx live-server<CR><C-\\><C-n>:tabp<CR>") 
+-- Buffers
+keymap("n", "<leader>bb", ":ls<CR>:b <C-r>=input('Buffer number: ')<CR><CR>")
+keymap("n", "<leader>bd", ":bd<CR>")
 
 -- Misc
+keymap("n", "<leader>rc", ":Ex ~/.config/nvim<CR>") 
 vim.keymap.set("n", "<Esc>", function()
   vim.cmd("nohlsearch")
   return "<Esc>"
