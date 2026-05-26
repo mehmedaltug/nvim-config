@@ -31,6 +31,8 @@ require("lazy").setup({
       vim.lsp.enable('jdtls')
       vim.lsp.enable('ts_ls')
       vim.lsp.enable('rust_analyzer')
+      vim.lsp.enable('tailwindcss')
+      vim.lsp.enable('lua_ls')
 
       -- Key mappings
       local keymap = vim.keymap.set
@@ -51,9 +53,15 @@ require("lazy").setup({
       local cmp = require("cmp")
       cmp.setup({
         mapping = {
-          ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 's' }), 
+          ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 's' }),
           ['<S-Tab>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'i', 's' }),
-          ['<CR>'] = cmp.mapping({ i = function(fallback) fallback() end }),
+          ['<CR>'] = cmp.mapping(function(fallback)
+              if cmp.visible() then
+                  cmp.confirm({ select = true })
+              else
+                  fallback()
+              end
+          end, { 'i', 's' }),
         },
         sources = cmp.config.sources({ { name = 'nvim_lsp' } })
       })
@@ -65,10 +73,8 @@ require("lazy").setup({
     build = ":TSUpdate",
     config = function()
       local ts = require("nvim-treesitter")
-      
       ts.setup({})
       ts.install({ "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "python", "javascript", "java", "c", "tsx" })
-  
       vim.api.nvim_create_autocmd("FileType", {
         callback = function()
           pcall(vim.treesitter.start)
