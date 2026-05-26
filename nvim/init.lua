@@ -62,6 +62,9 @@ require("lazy").setup({
                   fallback()
               end
           end, { 'i', 's' }),
+          ['<S-CR>'] = cmp.mapping(function(fallback)
+              fallback()
+          end, { 'i', 's' }),
         },
         sources = cmp.config.sources({ { name = 'nvim_lsp' } })
       })
