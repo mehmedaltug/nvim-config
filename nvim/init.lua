@@ -98,8 +98,6 @@ require("lazy").setup({
         }
     },
   },
-  {"xiyaowong/transparent.nvim",},
-  
   -- Copilot Token Provider (Required for CodeCompanion's Copilot adapter)
   {
     "zbirenbaum/copilot.lua",
@@ -167,6 +165,15 @@ require("lazy").setup({
       keymap("v", "<leader>ax", "<cmd>CodeCompanionEvaluate<cr>", { silent = true })
     end,
   },
+  {
+    "rachartier/tiny-inline-diagnostic.nvim",
+    event = "VeryLazy",
+    priority = 1000,
+    config = function()
+        require("tiny-inline-diagnostic").setup()
+        vim.diagnostic.config({ virtual_text = false }) -- Disable Neovim's default virtual text diagnostics
+    end,
+  }
 })
 
 -- ==========================================
@@ -189,6 +196,7 @@ opt.cursorline = true
 opt.ttimeoutlen = 10 
 opt.splitright = true 
 opt.splitbelow = true 
+opt.signcolumn = "number"
 
 -- ==========================================
 -- 5. KEYBINDS
@@ -215,7 +223,7 @@ keymap("n", "<C-M-Down>", "<C-w><S-j>")
 -- Terminals
 keymap("n", "<leader>th", ":split | term<CR>") 
 keymap("n", "<leader>tv", ":vsplit | term<CR><C-w>l") 
-keymap("n", "<leader>tt", ":tabnew | term<CR>") 
+keymap("n", "<leader>tt", ":term<CR>") 
 keymap("t", "<Esc>", "<C-\\><C-n>") 
 
 -- Buffers
