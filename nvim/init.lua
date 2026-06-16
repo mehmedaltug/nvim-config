@@ -1,7 +1,7 @@
 -- ==========================================
 -- 1. LEADER KEY
 -- ==========================================
-vim.g.mapleader = " " 
+vim.g.mapleader = " "
 
 -- ==========================================
 -- 2. BOOTSTRAP LAZY.NVIM
@@ -22,7 +22,6 @@ vim.cmd("colorscheme retrobox")
 -- ==========================================
 require("lazy").setup({
 
-  -- Native Neovim LSP
   {
     "neovim/nvim-lspconfig",
     config = function()
@@ -36,16 +35,14 @@ require("lazy").setup({
 
       -- Key mappings
       local keymap = vim.keymap.set
-      keymap("n", "gd", vim.lsp.buf.definition) 
-      keymap("n", "gr", vim.lsp.buf.references) 
-      keymap("n", "<leader>dd", vim.lsp.buf.hover) 
-      keymap("n", "gl", vim.diagnostic.open_float) 
-      keymap("n", "<leader>en", vim.diagnostic.goto_next) 
-      keymap("n", "<leader>ep", vim.diagnostic.goto_prev) 
+      keymap("n", "gd", vim.lsp.buf.definition)
+      keymap("n", "gr", vim.lsp.buf.references)
+      keymap("n", "<leader>dd", vim.lsp.buf.hover)
+      keymap("n", "gl", vim.diagnostic.open_float)
+      keymap("n", "<leader>en", vim.diagnostic.goto_next)
+      keymap("n", "<leader>ep", vim.diagnostic.goto_prev)
     end
   },
-
-  -- Completion
   {
     "hrsh7th/nvim-cmp",
     dependencies = { "hrsh7th/cmp-nvim-lsp" },
@@ -70,7 +67,6 @@ require("lazy").setup({
       })
     end
   },
-
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
@@ -85,7 +81,6 @@ require("lazy").setup({
       })
     end
   },
-
   {
     "mason-org/mason.nvim",
     opts = {
@@ -98,72 +93,25 @@ require("lazy").setup({
         }
     },
   },
-  -- Copilot Token Provider (Required for CodeCompanion's Copilot adapter)
   {
-    "zbirenbaum/copilot.lua",
-    cmd = "Copilot",
-    event = "InsertEnter",
-    config = function()
-      require("copilot").setup({
-        suggestion = { enabled = false }, -- Let CodeCompanion handle completion streams
-        panel = { enabled = false },
-      })
-    end,
-  },
-  -- The Unified AI Hub (Gemini CLI, Copilot, & Ollama)
-  {
-    "olimorris/codecompanion.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
+    'SuperBo/fugit2.nvim',
+    build = false,
+    opts = {
+      width = 100,
     },
-    config = function()
-      require("codecompanion").setup({
-        strategies = {
-          chat = { adapter = "copilot" },
-          inline = { adapter = "copilot" },
-        },
-        adapters = {
-          -- 1. Standard API Connections
-          http = {
-            opts = {
-              show_presets = false, -- Hides OpenAI, Anthropic, Azure, etc.
-            },
-            copilot = function()
-              return require("codecompanion.adapters").extend("copilot", {})
-            end,
-            ollama = function()
-              return require("codecompanion.adapters").extend("ollama", {
-                schema = {
-                  model = {
-                    default = "qwen2.5-coder:7b",
-                  },
-                },
-              })
-            end,
-          },
-          -- 2. Agent Client Protocol (ACP) Terminal Executables
-          acp = {
-            opts = {
-              show_presets = false, -- Hides any default ACP agents
-            },
-            gemini_cli = function()
-              return require("codecompanion.adapters").extend("gemini_cli", {
-                defaults = {
-                  auth_method = "oauth-personal",
-                },
-              })
-            end,
-          },
-        },
-      })
-
-      -- Global CodeCompanion Keybindings
-      local keymap = vim.keymap.set
-      keymap({ "n", "v" }, "<leader>aa", "<cmd>CodeCompanionChat<cr>", { silent = true })
-      keymap({ "n", "v" }, "<leader>ae", "<cmd>CodeCompanion<cr>", { silent = true })
-      keymap("v", "<leader>ax", "<cmd>CodeCompanionEvaluate<cr>", { silent = true })
-    end,
+    dependencies = {
+      'MunifTanjim/nui.nvim',
+      'nvim-tree/nvim-web-devicons',
+      'nvim-lua/plenary.nvim',
+      {
+        'chrisgrieser/nvim-tinygit',
+        dependencies = { 'stevearc/dressing.nvim' }
+      },
+    },
+    cmd = { 'Fugit2', 'Fugit2Diff', 'Fugit2Graph', 'Fugit2Rebase' },
+    keys = {
+      { '<leader>F', mode = 'n', '<cmd>Fugit2<cr>' }
+    }
   },
   {
     "rachartier/tiny-inline-diagnostic.nvim",
@@ -171,7 +119,7 @@ require("lazy").setup({
     priority = 1000,
     config = function()
         require("tiny-inline-diagnostic").setup()
-        vim.diagnostic.config({ virtual_text = false }) -- Disable Neovim's default virtual text diagnostics
+        vim.diagnostic.config({ virtual_text = false })
     end,
   }
 })
@@ -181,21 +129,21 @@ require("lazy").setup({
 -- ==========================================
 local opt = vim.opt
 opt.expandtab = true
-opt.shiftwidth = 4 
-opt.softtabstop = 4 
-opt.tabstop = 4 
-opt.scrolloff = 20 
-opt.number = true 
-opt.relativenumber = true 
-opt.smartindent = true 
+opt.shiftwidth = 4
+opt.softtabstop = 4
+opt.tabstop = 4
+opt.scrolloff = 20
+opt.number = true
+opt.relativenumber = true
+opt.smartindent = true
 opt.smartcase = true
 opt.ignorecase = true
-opt.showmatch = true 
-opt.backspace = { "indent", "eol", "start" } 
-opt.cursorline = true 
-opt.ttimeoutlen = 10 
-opt.splitright = true 
-opt.splitbelow = true 
+opt.showmatch = true
+opt.backspace = { "indent", "eol", "start" }
+opt.cursorline = true
+opt.ttimeoutlen = 10
+opt.splitright = true
+opt.splitbelow = true
 opt.signcolumn = "number"
 
 -- ==========================================
@@ -204,13 +152,13 @@ opt.signcolumn = "number"
 local keymap = vim.keymap.set
 
 -- Windows
-keymap("n", "<leader>cd", ":Ex<CR>") 
-keymap("n", "<leader>sv", ":vsplit<CR>") 
+keymap("n", "<leader>cd", ":Ex<CR>")
+keymap("n", "<leader>sv", ":vsplit<CR>")
 keymap("n", "<leader>sh", ":split<CR>")
-keymap("n", "<C-Right>", "<C-w>l") 
-keymap("n", "<C-Left>", "<C-w>h") 
-keymap("n", "<C-Down>", "<C-w>j") 
-keymap("n", "<C-Up>", "<C-w>k") 
+keymap("n", "<C-Right>", "<C-w>l")
+keymap("n", "<C-Left>", "<C-w>h")
+keymap("n", "<C-Down>", "<C-w>j")
+keymap("n", "<C-Up>", "<C-w>k")
 keymap("n", "<M-Up>", ":resize +10<CR>")
 keymap("n", "<M-Down>", ":resize -10<CR>")
 keymap("n", "<M-Left>", ":vertical resize +10<CR>")
@@ -221,17 +169,18 @@ keymap("n", "<C-M-Up>", "<C-w><S-k>")
 keymap("n", "<C-M-Down>", "<C-w><S-j>")
 
 -- Terminals
-keymap("n", "<leader>th", ":split | term<CR>") 
-keymap("n", "<leader>tv", ":vsplit | term<CR><C-w>l") 
-keymap("n", "<leader>tt", ":term<CR>") 
-keymap("t", "<Esc>", "<C-\\><C-n>") 
+keymap("n", "<leader>th", ":split | term<CR>")
+keymap("n", "<leader>tv", ":vsplit | term<CR><C-w>l")
+keymap("n", "<leader>tt", ":term<CR>")
+keymap("t", "<Esc>", "<C-\\><C-n>")
 
 -- Buffers
 keymap("n", "<leader>bb", ":ls<CR>:b <C-r>=input('Buffer number: ')<CR><CR>")
 keymap("n", "<leader>bd", ":bd<CR>")
+keymap("n", "<leader>bq", "<C-w>q")
 
 -- Misc
-keymap("n", "<leader>rc", ":Ex ~/.config/nvim<CR>") 
+keymap("n", "<leader>rc", ":Ex ~/.config/nvim<CR>")
 vim.keymap.set("n", "<Esc>", function()
   vim.cmd("nohlsearch")
   return "<Esc>"
