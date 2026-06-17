@@ -138,7 +138,12 @@ require("lazy").setup({
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     options = { theme = 'gruvbox-dark' },
     config = function()
-        require('lualine').setup()
+        require('lualine').setup {
+            options = {
+                section_separators = "",
+                component_separators = "",
+            }
+    	}
     end,
   }
 })
@@ -164,6 +169,7 @@ opt.ttimeoutlen = 10
 opt.splitright = true
 opt.splitbelow = true
 opt.signcolumn = "number"
+opt.showmode = false
 
 -- ==========================================
 -- 5. KEYBINDS
