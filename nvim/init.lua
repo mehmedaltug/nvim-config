@@ -15,7 +15,6 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 vim.opt.termguicolors = true
-vim.cmd("colorscheme retrobox")
 
 -- ==========================================
 -- 3. PLUGINS
@@ -97,7 +96,7 @@ require("lazy").setup({
     'SuperBo/fugit2.nvim',
     build = false,
     opts = {
-      width = 100,
+      width = 120,
     },
     dependencies = {
       'MunifTanjim/nui.nvim',
@@ -120,6 +119,26 @@ require("lazy").setup({
     config = function()
         require("tiny-inline-diagnostic").setup()
         vim.diagnostic.config({ virtual_text = false })
+    end,
+  },
+  {
+      "ellisonleao/gruvbox.nvim",
+      priority = 1000 ,
+      config = function()
+          vim.o.background = "dark"
+          vim.cmd([[colorscheme gruvbox]])
+          local colors = require("gruvbox").palette
+          vim.api.nvim_set_hl(0, "LineNr", { fg = colors.gray_245, bold = false })
+          vim.api.nvim_set_hl(0, "CursorLineNr", { fg = colors.bright_yellow, bold = true })
+      end,
+      opts = ...
+  },
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    options = { theme = 'gruvbox-dark' },
+    config = function()
+        require('lualine').setup()
     end,
   }
 })
