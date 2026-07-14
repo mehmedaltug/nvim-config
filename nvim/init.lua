@@ -1,11 +1,5 @@
--- ==========================================
--- 1. LEADER KEY
--- ==========================================
 vim.g.mapleader = " "
 
--- ==========================================
--- 2. BOOTSTRAP LAZY.NVIM
--- ==========================================
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
@@ -16,33 +10,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 vim.opt.termguicolors = true
 
--- ==========================================
--- 3. PLUGINS
--- ==========================================
 require("lazy").setup({
-
-  {
-    "neovim/nvim-lspconfig",
-    config = function()
-      vim.lsp.enable('clangd')
-      vim.lsp.enable('pylsp')
-      vim.lsp.enable('jdtls')
-      vim.lsp.enable('ts_ls')
-      vim.lsp.enable('rust_analyzer')
-      vim.lsp.enable('tailwindcss')
-      vim.lsp.enable('lua_ls')
-      vim.lsp.enable('html')
-
-      -- Key mappings
-      local keymap = vim.keymap.set
-      keymap("n", "gd", vim.lsp.buf.definition)
-      keymap("n", "gr", vim.lsp.buf.references)
-      keymap("n", "<leader>dd", vim.lsp.buf.hover)
-      keymap("n", "gl", vim.diagnostic.open_float)
-      keymap("n", "<leader>en", vim.diagnostic.goto_next)
-      keymap("n", "<leader>ep", vim.diagnostic.goto_prev)
-    end
-  },
   {
     "hrsh7th/nvim-cmp",
     dependencies = { "hrsh7th/cmp-nvim-lsp" },
@@ -63,7 +31,7 @@ require("lazy").setup({
               fallback()
           end, { 'i', 's' }),
         },
-        sources = cmp.config.sources({ { name = 'nvim_lsp' } })
+        sources = cmp.config.sources({ { name = 'nvim_lsp' } }, { { name = "buffer" } })
       })
     end
   },
@@ -73,7 +41,6 @@ require("lazy").setup({
     config = function()
       local ts = require("nvim-treesitter")
       ts.setup({})
-      ts.install({ "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "python", "javascript", "java", "c", "tsx" })
       vim.api.nvim_create_autocmd("FileType", {
         callback = function()
           pcall(vim.treesitter.start)
@@ -82,76 +49,42 @@ require("lazy").setup({
     end
   },
   {
-    "mason-org/mason.nvim",
-    opts = {
-        ui = {
-            icons = {
-                package_installed = "✓",
-                package_pending = "➜",
-                package_uninstalled = "✗"
-            }
-        }
-    },
-  },
-  {
-    'SuperBo/fugit2.nvim',
-    build = false,
-    opts = {
-      width = 120,
-    },
-    dependencies = {
-      'MunifTanjim/nui.nvim',
-      'nvim-tree/nvim-web-devicons',
-      'nvim-lua/plenary.nvim',
-      {
-        'chrisgrieser/nvim-tinygit',
-        dependencies = { 'stevearc/dressing.nvim' }
+      "mason-org/mason-lspconfig.nvim",
+      opts = {},
+      dependencies = {
+          { "mason-org/mason.nvim", opts = {} },
+          {
+              "neovim/nvim-lspconfig", 
+              config = function()
+                local keymap = vim.keymap.set
+                keymap("n", "gd", vim.lsp.buf.definition)
+                keymap("n", "gr", vim.lsp.buf.references)
+                keymap("n", "<leader>dd", vim.lsp.buf.hover)
+                keymap("n", "gl", vim.diagnostic.open_float)
+                keymap("n", "<leader>en", vim.diagnostic.goto_next)
+                keymap("n", "<leader>ep", vim.diagnostic.goto_prev)
+              end
+          },
       },
-    },
-    cmd = { 'Fugit2', 'Fugit2Diff', 'Fugit2Graph', 'Fugit2Rebase' },
-    keys = {
-      { '<leader>F', mode = 'n', '<cmd>Fugit2<cr>' }
-    }
   },
   {
-    "rachartier/tiny-inline-diagnostic.nvim",
-    event = "VeryLazy",
-    priority = 1000,
-    config = function()
-        require("tiny-inline-diagnostic").setup()
-        vim.diagnostic.config({ virtual_text = false })
-    end,
-  },
-  {
-      "ellisonleao/gruvbox.nvim",
-      priority = 1000 ,
-      config = function()
-          vim.o.background = "dark"
-          vim.cmd([[colorscheme gruvbox]])
-          local colors = require("gruvbox").palette
-          vim.api.nvim_set_hl(0, "LineNr", { fg = colors.gray_245, bold = false })
-          vim.api.nvim_set_hl(0, "CursorLineNr", { fg = colors.bright_yellow, bold = true })
-      end,
-      opts = ...
-  },
-  {
-    'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    options = { theme = 'gruvbox-dark' },
-    config = function()
-        require('lualine').setup {
-            options = {
-                section_separators = "",
-                component_separators = "",
-            }
-    	}
-    end,
+  "X3eRo0/dired.nvim",
+  dependencies = {"MunifTanjim/nui.nvim"},
+  config = function()
+      require("dired").setup {
+          path_separator = "/",
+          show_banner = true,
+          show_icons = false,
+          show_hidden = true,
+          show_dot_dirs = true,
+          show_colors = true,
+      }
+  end
   }
 })
 
--- ==========================================
--- 4. OPTIONS
--- ==========================================
+vim.cmd.colorscheme("retrobox")
+
 local opt = vim.opt
 opt.expandtab = true
 opt.shiftwidth = 4
@@ -170,43 +103,24 @@ opt.ttimeoutlen = 10
 opt.splitright = true
 opt.splitbelow = true
 opt.signcolumn = "number"
-opt.showmode = false
 
--- ==========================================
--- 5. KEYBINDS
--- ==========================================
 local keymap = vim.keymap.set
 
--- Windows
-keymap("n", "<leader>cd", ":Ex<CR>")
+keymap("n", "<leader>cd", ":Dired<CR>")
 keymap("n", "<leader>sv", ":vsplit<CR>")
 keymap("n", "<leader>sh", ":split<CR>")
-keymap("n", "<C-Right>", "<C-w>l")
-keymap("n", "<C-Left>", "<C-w>h")
-keymap("n", "<C-Down>", "<C-w>j")
-keymap("n", "<C-Up>", "<C-w>k")
 keymap("n", "<M-Up>", ":resize +10<CR>")
 keymap("n", "<M-Down>", ":resize -10<CR>")
 keymap("n", "<M-Left>", ":vertical resize +10<CR>")
 keymap("n", "<M-Right>", ":vertical resize -10<CR>")
-keymap("n", "<C-M-Right>", "<C-w><S-l>")
-keymap("n", "<C-M-Left>", "<C-w><S-h>")
-keymap("n", "<C-M-Up>", "<C-w><S-k>")
-keymap("n", "<C-M-Down>", "<C-w><S-j>")
 
--- Terminals
 keymap("n", "<leader>th", ":split | term<CR>")
 keymap("n", "<leader>tv", ":vsplit | term<CR><C-w>l")
-keymap("n", "<leader>tt", ":term<CR>")
 keymap("t", "<Esc>", "<C-\\><C-n>")
 
--- Buffers
 keymap("n", "<leader>bb", ":ls<CR>:b <C-r>=input('Buffer number: ')<CR><CR>")
 keymap("n", "<leader>bd", ":bd<CR>")
-keymap("n", "<leader>bq", "<C-w>q")
 
--- Misc
-keymap("n", "<leader>rc", ":Ex ~/.config/nvim<CR>")
 vim.keymap.set("n", "<Esc>", function()
   vim.cmd("nohlsearch")
   return "<Esc>"
