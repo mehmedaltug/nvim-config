@@ -27,8 +27,12 @@ require("lazy").setup({
                   fallback()
               end
           end, { 'i', 's' }),
-          ['<S-CR>'] = cmp.mapping(function(fallback)
+          ['<Esc>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.abort()
+            else
               fallback()
+            end
           end, { 'i', 's' }),
         },
         sources = cmp.config.sources({ { name = 'nvim_lsp' } }, { { name = "buffer" } })
@@ -84,6 +88,11 @@ require("lazy").setup({
 })
 
 vim.cmd.colorscheme("retrobox")
+local groups = { "Normal", "NormalFloat", "FloatBorder", "Pmenu" }
+for _, group in ipairs(groups) do
+    vim.api.nvim_set_hl(0, group, { bg = "none" })
+end
+
 
 local opt = vim.opt
 opt.expandtab = true
