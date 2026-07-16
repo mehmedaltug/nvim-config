@@ -102,6 +102,7 @@ opt.cursorline = true
 opt.ttimeoutlen = 10
 opt.splitright = true
 opt.splitbelow = true
+opt.laststatus = 0
 opt.signcolumn = "number"
 
 local keymap = vim.keymap.set
