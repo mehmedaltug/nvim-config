@@ -21,11 +21,11 @@ require("lazy").setup({
           ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 's' }),
           ['<S-Tab>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'i', 's' }),
           ['<CR>'] = cmp.mapping(function(fallback)
-              if cmp.visible() then
-                  cmp.confirm({ select = true })
-              else
-                  fallback()
-              end
+            if cmp.visible() then
+                cmp.confirm({ select = true })
+            else
+                fallback()
+            end
           end, { 'i', 's' }),
           ['<Esc>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
@@ -64,18 +64,19 @@ require("lazy").setup({
   config = function()
       require("dired").setup {
           path_separator = "/",
-          show_banner = true,
+          show_banner = false,
           show_icons = false,
           show_hidden = true,
           show_dot_dirs = true,
           show_colors = true,
       }
   end
-  }
+  },
+  {"windwp/nvim-autopairs", config = true, event = "InsertEnter"}
 })
 
-vim.cmd.colorscheme("slate")
-local groups = { "Normal", "NormalFloat", "FloatBorder", "Pmenu" }
+vim.cmd.colorscheme("retrobox")
+local groups = { "Normal", "NormalFloat", "FloatBorder", "Pmenu", "StatusLine" }
 for _, group in ipairs(groups) do
     vim.api.nvim_set_hl(0, group, { bg = "none" })
 end
@@ -99,6 +100,7 @@ opt.ttimeoutlen = 10
 opt.splitright = true
 opt.splitbelow = true
 opt.signcolumn = "number"
+vim.opt.shell = 'bash'
 
 local keymap = vim.keymap.set
 
@@ -112,6 +114,7 @@ keymap("n", "<M-Right>", ":vertical resize -10<CR>")
 
 keymap("n", "<leader>th", ":split | term<CR>")
 keymap("n", "<leader>tv", ":vsplit | term<CR><C-w>l")
+keymap("n", "<leader>tt", ":term<CR>")
 keymap("t", "<Esc>", "<C-\\><C-n>")
 
 keymap("n", "<leader>bb", ":ls<CR>:b <C-r>=input('Buffer number: ')<CR><CR>")
