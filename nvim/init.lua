@@ -40,19 +40,6 @@ require("lazy").setup({
     end
   },
   {
-    "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
-    config = function()
-      local ts = require("nvim-treesitter")
-      ts.setup({})
-      vim.api.nvim_create_autocmd("FileType", {
-        callback = function()
-          pcall(vim.treesitter.start)
-        end,
-      })
-    end
-  },
-  {
       "mason-org/mason-lspconfig.nvim",
       opts = {},
       dependencies = {
@@ -87,7 +74,7 @@ require("lazy").setup({
   }
 })
 
-vim.cmd.colorscheme("retrobox")
+vim.cmd.colorscheme("slate")
 local groups = { "Normal", "NormalFloat", "FloatBorder", "Pmenu" }
 for _, group in ipairs(groups) do
     vim.api.nvim_set_hl(0, group, { bg = "none" })
@@ -111,7 +98,6 @@ opt.cursorline = true
 opt.ttimeoutlen = 10
 opt.splitright = true
 opt.splitbelow = true
-opt.laststatus = 0
 opt.signcolumn = "number"
 
 local keymap = vim.keymap.set
