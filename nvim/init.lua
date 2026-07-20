@@ -100,7 +100,12 @@ opt.ttimeoutlen = 10
 opt.splitright = true
 opt.splitbelow = true
 opt.signcolumn = "number"
-vim.opt.shell = 'bash'
+opt.shell = 'bash'
+opt.shellcmdflag = "-c"
+opt.shellquote = ""
+opt.shellxquote = ""
+opt.shellredir = ">%s 2>&1"
+opt.shellpipe = "2>&1| tee"
 
 local keymap = vim.keymap.set
 
